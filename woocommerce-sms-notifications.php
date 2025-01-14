@@ -9,6 +9,7 @@ Author URI: https://github.com/philwamba
 
 defined('ABSPATH') || exit;
 
+// Constants for plugin directory path and URL
 define('WCSMS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WCSMS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -19,7 +20,12 @@ require_once WCSMS_PLUGIN_DIR . 'includes/class-log-status.php';
 require_once WCSMS_PLUGIN_DIR . 'includes/class-cart-abandonment.php';
 require_once WCSMS_PLUGIN_DIR . 'includes/class-order-status.php';
 
+// Register activation hook to create the logs table
 register_activation_hook(__FILE__, 'wcsms_create_logs_table');
+
+/**
+ * Creates a database table to store SMS logs.
+ */
 function wcsms_create_logs_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'wcsms_logs';
@@ -34,9 +40,11 @@ function wcsms_create_logs_table() {
         PRIMARY KEY (id)
     ) $charset_collate;";
 
+    // Include WordPress upgrade functions
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     dbDelta($sql);
 
+    // Log the result of the table creation
     if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name) {
         error_log("WooCommerce SMS Notifications: Table '$table_name' created successfully.");
     } else {

@@ -3,11 +3,24 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * Handles sending SMS notifications to customers based on WooCommerce order status changes.
+ */
 class WCSMS_Order_Status_SMS {
+     /**
+     * Initializes the order status SMS feature by hooking into WooCommerce events.
+     */
     public static function init() {
         add_action('woocommerce_order_status_changed', [__CLASS__, 'send_order_status_sms'], 10, 3);
     }
 
+    /**
+     * Sends an SMS notification to the customer when an order status changes.
+     *
+     * @param int    $order_id   The ID of the order.
+     * @param string $old_status The previous status of the order.
+     * @param string $new_status The new status of the order.
+     */
     public static function send_order_status_sms($order_id, $old_status, $new_status) {
         error_log("Order status changed: Order ID = $order_id, Old Status = $old_status, New Status = $new_status");
 
@@ -53,6 +66,11 @@ class WCSMS_Order_Status_SMS {
         }
     }
 
+    /**
+     * Retrieves the default SMS message templates for all order statuses.
+     *
+     * @return array An associative array of order status keys and their corresponding default messages.
+     */
     private static function get_default_messages_from_settings() {
         $default_messages = [];
         foreach (wc_get_order_statuses() as $status => $label) {

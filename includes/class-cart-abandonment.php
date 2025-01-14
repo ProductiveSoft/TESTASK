@@ -3,18 +3,30 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * Handles cart abandonment notifications.
+ */
 class WCSMS_Cart_Abandonment {
+    /**
+     * Initializes the cart abandonment feature by adding necessary actions.
+     */
     public static function init() {
         add_action('wp', [__CLASS__, 'schedule_cart_abandonment_check']);
         add_action('wcsms_check_abandoned_carts', [__CLASS__, 'process_abandoned_carts']);
     }
 
+    /**
+     * Schedules the cart abandonment check if it is not already scheduled.
+     */
     public static function schedule_cart_abandonment_check() {
         if (!wp_next_scheduled('wcsms_check_abandoned_carts')) {
             wp_schedule_event(time(), 'hourly', 'wcsms_check_abandoned_carts');
         }
     }
 
+    /**
+     * Processes abandoned carts by retrieving them and sending SMS notifications.
+     */
     public static function process_abandoned_carts() {
         global $wpdb;
 
@@ -34,5 +46,6 @@ class WCSMS_Cart_Abandonment {
         }
     }
 }
+
 WCSMS_Cart_Abandonment::init();
 
